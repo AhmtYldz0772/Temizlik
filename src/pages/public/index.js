@@ -1,0 +1,8 @@
+export { default as HomePage } from './HomePage'
+export { default as ServicesPage } from './ServicesPage'
+export { default as ServiceDetailPage } from './ServiceDetailPage'
+export { default as ProjectsPage } from './ProjectsPage'
+export { default as BlogPage } from './BlogPage'
+export { default as BlogDetailPage } from './BlogDetailPage'
+export { default as AboutPage } from './AboutPage'
+export { default as ContactPage } from './ContactPage'
