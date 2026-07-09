@@ -7,6 +7,7 @@ import { getProjects } from '../../firebase/projectsService'
 import { getBlogPosts } from '../../firebase/blogService'
 import { getRecentContactMessages, getUnreadCount } from '../../firebase/contactService'
 import { formatDate, truncateText } from '../../utils/helpers'
+import SeedButton from '../../components/admin/SeedButton'
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState({ services: 0, projects: 0, blogPosts: 0, unreadMessages: 0 })
@@ -56,6 +57,9 @@ const AdminDashboard = () => {
         <p className="text-neutral-500 mt-1">Hoş geldiniz! Genel durumu buradan takip edebilirsiniz.</p>
       </div>
 
+      {/* SEO Data Seeder */}
+      <SeedButton />
+
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {statCards.map((stat, index) => (
@@ -103,7 +107,7 @@ const AdminDashboard = () => {
         ) : (
           <div className="divide-y divide-neutral-100">
             {recentMessages.map((message) => (
-              <div key={message.id} className="p-4 hover:bg-neutral-50 transition-colors">
+               <div key={message.id} className="p-4 hover:bg-neutral-50 transition-colors">
                 <div className="flex items-start justify-between mb-2">
                   <div>
                     <p className="font-medium text-neutral-800">{message.fullName}</p>

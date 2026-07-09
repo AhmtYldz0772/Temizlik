@@ -6,14 +6,24 @@ import {
 import { getDoc, doc } from 'firebase/firestore'
 import { auth, db } from './config'
 
-const ADMINS_COLLECTION = 'admins'
+const USERS_COLLECTION = 'users'
 
 export const loginAdmin = async (email, password) => {
   const userCredential = await signInWithEmailAndPassword(auth, email, password)
   const user = userCredential.user
 
-  const adminDoc = await getDoc(doc(db, ADMINS_COLLECTION, user.uid))
-  if (!adminDoc.exists()) {
+  console.log('Auth başarılı, UID:', user.uid)
+
+  // Token'ın Firestore'da geçerli olması için yenile
+  await user.getIdToken(true)
+
+  // Yeni rules: users koleksiyonunda role == 'admin' kontrolü
+  const userDoc = await getDoc(doc(db, USERS_COLLECTION, user.uid))
+
+  console.log('Firestore doc exists:', userDoc.exists())
+  console.log('Firestore doc data:', userDoc.data())
+
+  if (!userDoc.exists() || userDoc.data().role !== 'admin') {
     await signOut(auth)
     throw new Error('Bu hesabın yönetici erişimi yok.')
   }
@@ -26,8 +36,8 @@ export const logoutAdmin = async () => {
 }
 
 export const checkAdminAccess = async (uid) => {
-  const adminDoc = await getDoc(doc(db, ADMINS_COLLECTION, uid))
-  return adminDoc.exists()
+  const userDoc = await getDoc(doc(db, USERS_COLLECTION, uid))
+  return userDoc.exists() && userDoc.data().role === 'admin'
 }
 
 export const onAuthChange = (callback) => {

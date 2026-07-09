@@ -26,6 +26,7 @@ const AdminLogin = () => {
       await loginAdmin(email, password)
       navigate('/admin')
     } catch (err) {
+      console.error('Login error:', err.code, err.message)
       let errorMessage = 'Giriş yapılırken bir hata oluştu.'
       if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') {
         errorMessage = 'E-posta veya şifre hatalı.'

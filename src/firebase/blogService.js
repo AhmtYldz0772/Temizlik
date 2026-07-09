@@ -17,16 +17,13 @@ import { db } from './config'
 const COLLECTION_NAME = 'blogPosts'
 
 export const getBlogPosts = async (onlyPublished = false) => {
-  let q = query(collection(db, COLLECTION_NAME), orderBy('publishedAt', 'desc'))
-  if (onlyPublished) {
-    q = query(
-      collection(db, COLLECTION_NAME),
-      where('isPublished', '==', true),
-      orderBy('publishedAt', 'desc')
-    )
-  }
+  const q = query(collection(db, COLLECTION_NAME), orderBy('publishedAt', 'desc'))
   const snapshot = await getDocs(q)
-  return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+  const docs = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+  if (onlyPublished) {
+    return docs.filter(d => d.isPublished === true)
+  }
+  return docs
 }
 
 export const getBlogPostById = async (id) => {
@@ -49,16 +46,12 @@ export const getBlogPostBySlug = async (slug) => {
 }
 
 export const getRecentBlogPosts = async (excludeId, count = 3) => {
-  let q = query(
-    collection(db, COLLECTION_NAME),
-    where('isPublished', '==', true),
-    orderBy('publishedAt', 'desc'),
-    limit(count + 1)
-  )
+  const q = query(collection(db, COLLECTION_NAME), orderBy('publishedAt', 'desc'))
   const snapshot = await getDocs(q)
-  return snapshot.docs
-    .map((doc) => ({ id: doc.id, ...doc.data() }))
-    .filter((post) => post.id !== excludeId)
+  const docs = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+  
+  return docs
+    .filter(d => d.isPublished === true && d.id !== excludeId)
     .slice(0, count)
 }
 

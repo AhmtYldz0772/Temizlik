@@ -16,12 +16,13 @@ import { db } from './config'
 const COLLECTION_NAME = 'projects'
 
 export const getProjects = async (onlyActive = false) => {
-  let q = query(collection(db, COLLECTION_NAME), orderBy('order', 'asc'))
-  if (onlyActive) {
-    q = query(collection(db, COLLECTION_NAME), where('isActive', '==', true), orderBy('order', 'asc'))
-  }
+  const q = query(collection(db, COLLECTION_NAME), orderBy('order', 'asc'))
   const snapshot = await getDocs(q)
-  return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+  const docs = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+  if (onlyActive) {
+    return docs.filter((d) => d.isActive === true)
+  }
+  return docs
 }
 
 export const getProjectById = async (id) => {
